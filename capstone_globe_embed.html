@@ -1,0 +1,355 @@
+<!-- 
+  CAPSTONE THESIS GLOBE — Catherine E. Covey, Ph.D.
+  Paste this entire block into a Squarespace Code Block.
+  No other setup needed.
+-->
+
+<style>
+  #cec-globe-wrap { width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; }
+  #cec-legend { display: flex; flex-wrap: wrap; gap: 6px; padding: 0.5rem 0 0.75rem; align-items: center; }
+  #cec-legend-label { font-size: 11px; color: #888; margin-right: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .cec-cat-btn { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; border: 1px solid currentColor; background: transparent; cursor: pointer; font-size: 11px; transition: all 0.15s; font-family: inherit; }
+  .cec-cat-btn .cec-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+  #cec-clear { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid #ccc; background: transparent; cursor: pointer; color: #888; margin-left: 4px; font-family: inherit; }
+  #cec-gc { width: 100%; height: 500px; position: relative; overflow: hidden; border-radius: 8px; }
+  #cec-canvas { width: 100%; height: 100%; display: block; cursor: grab; }
+  #cec-ip { position: absolute; top: 12px; right: 12px; width: 230px; display: none; background: #fff; border: 0.5px solid #ddd; border-radius: 8px; padding: 12px 14px; z-index: 10; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  #cec-ip-city { font-size: 11px; color: #999; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 3px; }
+  #cec-ip-building { font-size: 13px; font-weight: 500; color: #1a1a1a; line-height: 1.3; margin-bottom: 6px; }
+  #cec-ip-award { font-size: 11px; color: #BA7517; margin-bottom: 3px; display: none; line-height: 1.4; }
+  #cec-ip-pub { font-size: 11px; color: #666; margin-bottom: 6px; display: none; }
+  #cec-ip-cats { display: flex; flex-wrap: wrap; gap: 3px; }
+  .cec-pill { font-size: 10px; padding: 2px 7px; border-radius: 10px; border: 1px solid currentColor; }
+  #cec-hint { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #aaa; pointer-events: none; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+  .cec-award-key { display: inline-flex; align-items: center; gap: 3px; }
+  .cec-award-ring { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #EF9F27; display: inline-block; }
+</style>
+
+<div id="cec-globe-wrap">
+  <div id="cec-legend">
+    <span id="cec-legend-label">filter:</span>
+    <div id="cec-btns"></div>
+    <button id="cec-clear">clear</button>
+  </div>
+  <div id="cec-gc">
+    <canvas id="cec-canvas"></canvas>
+    <div id="cec-ip">
+      <div id="cec-ip-city"></div>
+      <div id="cec-ip-building"></div>
+      <div id="cec-ip-award"></div>
+      <div id="cec-ip-pub"></div>
+      <div id="cec-ip-cats"></div>
+    </div>
+    <div id="cec-hint">
+      <span class="cec-award-key"><span class="cec-award-ring"></span> award-winning thesis</span>
+      <span>drag to explore &middot; click for details</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function() {
+
+const CATS = {
+  "Civic":                 { color: 0x185FA5, hex: "#185FA5" },
+  "Housing":               { color: 0x0F6E56, hex: "#0F6E56" },
+  "Religious/Sacred":      { color: 0x534AB7, hex: "#534AB7" },
+  "Heritage/Preservation": { color: 0x993C1D, hex: "#993C1D" },
+  "Commercial":            { color: 0x444441, hex: "#444441" },
+  "Monument/Memorial":     { color: 0xBA7517, hex: "#BA7517" },
+  "Identity":              { color: 0x993556, hex: "#993556" },
+};
+const AW = 0xEF9F27;
+
+const LAND = [
+  [70,-140],[70,-130],[70,-120],[70,-100],[70,-85],[70,-75],[65,-168],[65,-140],[65,-120],[65,-100],[65,-85],[65,-75],[65,-65],
+  [60,-165],[60,-140],[60,-130],[60,-120],[60,-110],[60,-100],[60,-90],[60,-80],[60,-70],[60,-65],[60,-55],
+  [55,-165],[55,-160],[55,-130],[55,-120],[55,-110],[55,-100],[55,-90],[55,-80],[55,-70],[55,-60],
+  [50,-125],[50,-120],[50,-110],[50,-100],[50,-90],[50,-80],[50,-70],[50,-65],[50,-60],[50,-55],
+  [45,-125],[45,-120],[45,-110],[45,-100],[45,-90],[45,-80],[45,-75],[45,-70],[45,-65],
+  [40,-125],[40,-120],[40,-115],[40,-110],[40,-105],[40,-100],[40,-95],[40,-90],[40,-85],[40,-80],[40,-75],[40,-70],
+  [35,-120],[35,-115],[35,-110],[35,-105],[35,-100],[35,-95],[35,-90],[35,-85],[35,-80],[35,-75],
+  [30,-115],[30,-110],[30,-105],[30,-100],[30,-95],[30,-90],[30,-85],[30,-80],
+  [25,-110],[25,-105],[25,-100],[25,-95],[25,-90],[25,-85],[25,-80],
+  [20,-105],[20,-100],[20,-95],[20,-90],[20,-85],[20,-80],[20,-75],
+  [15,-90],[15,-85],[15,-80],[15,-75],[15,-70],[10,-85],[10,-80],[10,-75],[10,-70],[10,-65],
+  [5,-80],[5,-75],[5,-60],[0,-78],[0,-60],
+  [80,-40],[80,-30],[75,-60],[75,-45],[75,-30],[70,-55],[70,-45],[70,-30],[65,-52],[65,-40],[60,-45],
+  [20,-75],[18,-70],[18,-65],[17,-63],[15,-60],[13,-59],
+  [10,-72],[10,-68],[10,-63],[5,-75],[5,-60],[0,-65],[0,-50],
+  [-5,-80],[-5,-75],[-5,-65],[-5,-55],[-5,-45],
+  [-10,-78],[-10,-70],[-10,-60],[-10,-50],[-10,-40],
+  [-15,-75],[-15,-65],[-15,-55],[-15,-45],
+  [-20,-70],[-20,-60],[-20,-55],[-20,-48],[-20,-42],
+  [-25,-70],[-25,-60],[-25,-55],[-25,-50],[-25,-48],
+  [-30,-70],[-30,-65],[-30,-60],[-30,-55],[-30,-52],
+  [-35,-70],[-35,-65],[-35,-60],[-35,-58],
+  [-40,-70],[-40,-65],[-40,-63],[-45,-68],[-45,-65],[-50,-70],[-50,-68],[-55,-68],
+  [70,25],[70,20],[65,25],[65,15],[65,12],[60,25],[60,15],[60,10],[60,5],
+  [55,25],[55,15],[55,10],[55,5],[55,0],[55,-3],
+  [50,20],[50,15],[50,10],[50,5],[50,0],[50,-5],
+  [45,25],[45,20],[45,15],[45,10],[45,5],[45,0],[45,-5],[45,-8],
+  [40,28],[40,25],[40,20],[40,15],[40,10],[40,5],[40,0],[40,-5],[40,-8],
+  [35,28],[35,25],[35,20],[35,15],[35,10],[35,5],[35,0],[35,-5],
+  [58,-4],[56,-3],[54,-5],[54,-3],[52,-3],[52,0],[50,0],
+  [70,28],[68,18],[66,15],[64,12],[62,5],[62,8],
+  [70,50],[70,60],[70,70],[70,80],[70,90],[70,100],[70,110],[70,120],[70,130],[70,140],[70,150],[70,160],[70,170],
+  [65,35],[65,40],[65,50],[65,60],[65,70],[65,80],[65,90],[65,100],[65,110],[65,120],[65,130],[65,140],[65,150],[65,160],
+  [60,30],[60,40],[60,50],[60,60],[60,70],[60,80],[60,90],[60,100],[60,110],[60,120],[60,130],[60,140],[60,150],[60,160],
+  [55,35],[55,40],[55,50],[55,60],[55,70],[55,80],[55,90],[55,100],[55,110],[55,120],[55,130],[55,140],
+  [50,30],[50,40],[50,50],[50,60],[50,70],[50,80],[50,90],[50,100],[50,110],[50,120],[50,130],[50,140],
+  [45,35],[45,40],[45,50],[45,60],[45,70],[45,80],[45,90],[45,100],[45,110],[45,120],[45,130],[45,135],
+  [40,35],[40,40],[40,45],[40,50],[40,55],[40,60],[40,65],[40,70],[40,75],[40,80],[40,85],[40,90],[40,95],[40,100],[40,105],[40,110],[40,115],[40,120],[40,125],[40,130],
+  [35,35],[35,40],[35,45],[35,55],[35,60],[35,65],[35,70],[35,75],[35,80],[35,85],[35,90],[35,95],[35,100],[35,105],[35,110],[35,115],[35,120],[35,125],[35,130],[35,135],
+  [30,35],[30,40],[30,45],[30,50],[30,55],[30,60],[30,65],[30,70],[30,75],[30,80],[30,85],[30,90],[30,95],[30,100],[30,105],[30,110],[30,115],[30,120],
+  [25,55],[25,60],[25,65],[25,70],[25,75],[25,80],[25,85],[25,90],[25,95],[25,100],[25,105],[25,110],[25,115],[25,120],
+  [20,40],[20,45],[20,55],[20,60],[20,65],[20,70],[20,75],[20,80],[20,85],[20,90],[20,95],[20,100],[20,105],[20,110],[20,115],[20,120],
+  [15,40],[15,45],[15,100],[15,105],[15,108],[10,5],[10,100],[10,105],[10,108],
+  [5,100],[5,103],[5,105],[0,103],[0,108],[0,110],
+  [20,100],[20,105],[20,108],[15,100],[15,105],[10,98],[10,100],[10,103],
+  [5,100],[5,103],[0,100],[0,103],[0,108],[-5,105],[-5,108],[-7,107],[-7,110],[-8,115],
+  [45,140],[43,141],[40,140],[38,140],[36,138],[35,136],[34,130],[35,128],[37,127],[38,126],
+  [18,121],[16,120],[14,122],[12,123],[10,123],[8,124],
+  [35,10],[35,5],[35,0],[35,-5],[30,0],[30,5],[30,10],[30,15],[30,20],[30,25],[30,30],[30,35],
+  [25,0],[25,5],[25,10],[25,15],[25,20],[25,25],[25,30],[25,35],[25,40],[25,45],
+  [20,-15],[20,-10],[20,0],[20,5],[20,10],[20,15],[20,20],[20,25],[20,30],[20,35],[20,40],[20,45],
+  [15,-15],[15,-10],[15,0],[15,5],[15,10],[15,15],[15,20],[15,25],[15,30],[15,35],[15,40],[15,45],
+  [10,-15],[10,-10],[10,0],[10,5],[10,10],[10,15],[10,20],[10,25],[10,30],[10,35],[10,40],[10,45],
+  [5,-5],[5,0],[5,5],[5,10],[5,15],[5,20],[5,25],[5,30],[5,35],[5,40],
+  [0,10],[0,15],[0,20],[0,25],[0,30],[0,35],[0,40],
+  [-5,10],[-5,15],[-5,20],[-5,25],[-5,30],[-5,35],[-5,40],
+  [-10,15],[-10,20],[-10,25],[-10,30],[-10,35],[-10,40],
+  [-15,15],[-15,20],[-15,25],[-15,30],[-15,35],[-15,40],
+  [-20,20],[-20,25],[-20,30],[-20,35],[-20,45],
+  [-25,25],[-25,30],[-25,35],[-30,25],[-30,30],[-34,18],[-34,22],[-34,26],
+  [-15,47],[-20,45],[-23,44],
+  [-15,130],[-15,135],[-15,140],[-15,145],
+  [-20,115],[-20,120],[-20,125],[-20,130],[-20,135],[-20,140],[-20,145],[-20,150],
+  [-25,115],[-25,120],[-25,125],[-25,130],[-25,135],[-25,140],[-25,145],[-25,150],
+  [-30,115],[-30,120],[-30,125],[-30,130],[-30,135],[-30,140],[-30,145],[-30,150],
+  [-35,115],[-35,120],[-35,125],[-35,135],[-35,138],[-35,140],[-35,145],[-35,148],
+  [-38,140],[-38,145],[-38,148],[-40,144],[-40,148],
+  [-37,175],[-40,175],[-42,172],[-44,170],[-46,168],
+];
+
+function spiral(items, cLat, cLng, r) {
+  const n = items.length;
+  return items.map((t, i) => {
+    if (n === 1) return { ...t, lat: cLat, lng: cLng };
+    const angle = (i / n) * 2 * Math.PI;
+    const rad = r * (0.3 + 0.7 * (i / Math.max(n - 1, 1)));
+    return { ...t, lat: cLat + rad * Math.cos(angle), lng: cLng + rad * Math.sin(angle) / Math.cos(cLat * Math.PI / 180) };
+  });
+}
+
+const SF = spiral([
+  { city:"San Francisco", building:"Portsmouth Square",            cats:["Identity","Heritage/Preservation","Civic","Monument/Memorial"], award:"Charlene Conrad Liebau Library Prize", published:true },
+  { city:"San Francisco", building:"Pre-1906 Chinatown Temples",   cats:["Religious/Sacred","Heritage/Preservation","Identity"],           award:"Meyers-Putnam Family Bancroft Library Fellowship", published:false },
+  { city:"San Francisco", building:"SF City Hall",                 cats:["Civic","Monument/Memorial","Heritage/Preservation"] },
+  { city:"San Francisco", building:"Ferry Building",               cats:["Commercial","Heritage/Preservation","Civic","Identity","Monument/Memorial"] },
+  { city:"San Francisco", building:"Ping Yuen Public Housing",     cats:["Housing","Identity","Heritage/Preservation"] },
+  { city:"San Francisco", building:"Twin Peaks Tavern",            cats:["Identity","Heritage/Preservation","Monument/Memorial"] },
+  { city:"San Francisco", building:"Transamerica Pyramid",         cats:["Commercial","Civic","Identity","Monument/Memorial"] },
+  { city:"San Francisco", building:"Palace Hotel",                 cats:["Commercial","Heritage/Preservation","Identity"] },
+  { city:"San Francisco", building:"California Academy of Sciences", cats:["Heritage/Preservation","Civic","Identity"] },
+  { city:"San Francisco", building:"International Hotel / Manilatown", cats:["Housing","Identity","Heritage/Preservation","Monument/Memorial"] },
+], 37.785, -122.42, 0.9);
+
+const EB = spiral([
+  { city:"Oakland",      building:"Community Cabins",  cats:["Housing","Identity"] },
+  { city:"Oakland",      building:"DeFremery Park",    cats:["Heritage/Preservation","Identity","Civic"] },
+  { city:"Berkeley",     building:"Berkeley City Club", cats:["Identity","Heritage/Preservation","Civic"], award:"Charlene Conrad Liebau Library Prize", published:true },
+  { city:"Richmond, CA", building:"Hotel Carquinez",   cats:["Housing","Commercial","Identity"] },
+], 37.83, -122.27, 0.5);
+
+const BER = spiral([
+  { city:"Berlin", building:"East/West German Memorialization", cats:["Monument/Memorial","Identity","Heritage/Preservation","Civic"] },
+  { city:"Berlin", building:"Berlin Philharmonie",              cats:["Monument/Memorial","Civic","Identity"] },
+  { city:"Berlin", building:"Meyers Hof (Mietskaserne)",        cats:["Housing","Heritage/Preservation","Identity"] },
+], 52.51, 13.38, 0.45);
+
+const OTHER = [
+  { lat:40.7,   lng:-74.0,   city:"New York",           building:"UN Headquarters",                  cats:["Civic","Monument/Memorial","Identity"] },
+  { lat:37.995, lng:-122.555,city:"San Rafael, CA",      building:"Marin Civic Center",               cats:["Civic","Heritage/Preservation","Monument/Memorial","Identity"] },
+  { lat:33.8,   lng:-116.5,  city:"Palm Springs",        building:"Palm Springs City Hall",           cats:["Civic","Heritage/Preservation","Identity"] },
+  { lat:42.3,   lng:-71.1,   city:"Boston",              building:"Boston City Hall / Scollay Square", cats:["Civic","Heritage/Preservation","Identity"] },
+  { lat:38.9,   lng:-77.0,   city:"Washington DC",       building:"US Capitol",                       cats:["Civic","Monument/Memorial","Heritage/Preservation","Identity"] },
+  { lat:43.7,   lng:-79.4,   city:"Toronto",             building:"Toronto New City Hall (1965)",      cats:["Civic","Monument/Memorial","Identity","Heritage/Preservation"] },
+  { lat:22.28,  lng:114.16,  city:"Hong Kong",           building:"Central Police Station / Tai Kwun", cats:["Civic","Heritage/Preservation","Identity"] },
+  { lat:13.1,   lng:-59.6,   city:"Bridgetown, Barbados",building:"Historic Bridgetown",              cats:["Civic","Heritage/Preservation","Identity","Monument/Memorial"] },
+  { lat:64.2,   lng:-51.7,   city:"Nuuk, Greenland",     building:"Blok P",                           cats:["Housing","Identity","Heritage/Preservation"] },
+  { lat:1.3,    lng:103.8,   city:"Singapore",           building:"Tiong Bahru Estate",               cats:["Housing","Heritage/Preservation","Identity"] },
+  { lat:36.6,   lng:-105.4,  city:"Taos, NM",            building:"Taos Pueblo",                      cats:["Religious/Sacred","Heritage/Preservation","Identity","Civic"], award:"Charlene Conrad Liebau Library Prize — Honorable Mention", published:true },
+  { lat:42.34,  lng:-71.1,   city:"Boston",              building:"Isabella Stewart Gardner Museum",   cats:["Heritage/Preservation","Commercial","Identity"] },
+  { lat:34.1,   lng:-118.3,  city:"Los Angeles",         building:"Southwest Museum of the American Indian", cats:["Heritage/Preservation","Identity","Monument/Memorial"] },
+  { lat:34.0,   lng:-118.24, city:"Los Angeles",         building:"Union Station",                    cats:["Civic","Heritage/Preservation","Commercial","Identity"] },
+  { lat:14.6,   lng:121.0,   city:"Manila",              building:"Coconut Palace (CCP)",             cats:["Heritage/Preservation","Civic","Identity","Monument/Memorial"] },
+  { lat:22.3,   lng:114.2,   city:"Hong Kong",           building:"Old Supreme Court",                cats:["Heritage/Preservation","Civic","Monument/Memorial","Identity"] },
+  { lat:22.05,  lng:-159.5,  city:"Kauaʻi, Hawaii",     building:"Coco Palms Resort",                cats:["Heritage/Preservation","Commercial","Identity"] },
+  { lat:21.3,   lng:-157.8,  city:"Honolulu",            building:"Alexander & Baldwin Building",     cats:["Commercial","Heritage/Preservation","Identity"] },
+  { lat:29.9,   lng:-90.0,   city:"New Orleans",         building:"Twin Doullut Steamboat Houses",    cats:["Heritage/Preservation","Commercial","Identity"] },
+  { lat:38.0,   lng:-78.5,   city:"Monticello, VA",      building:"Monticello / Jefferson",           cats:["Monument/Memorial","Heritage/Preservation","Identity","Civic"] },
+  { lat:47.6,   lng:-122.35, city:"Seattle",             building:"Seattle Space Needle",             cats:["Monument/Memorial","Commercial","Civic","Identity"] },
+  { lat:48.2,   lng:16.4,    city:"Vienna",              building:"Karl Marx Hof",                    cats:["Housing","Civic","Monument/Memorial","Identity"] },
+  { lat:41.0,   lng:28.9,    city:"Istanbul",            building:"Aksaray Square",                   cats:["Civic","Identity","Heritage/Preservation","Monument/Memorial"] },
+  { lat:31.6,   lng:74.9,    city:"Amritsar, India",     building:"Sri Harmandir Sahib",              cats:["Religious/Sacred","Heritage/Preservation","Identity","Monument/Memorial"] },
+  { lat:40.4,   lng:44.5,    city:"Armenia",             building:"Geghard Monastery",                cats:["Religious/Sacred","Heritage/Preservation","Identity","Monument/Memorial"] },
+];
+
+const theses = [...SF, ...EB, ...BER, ...OTHER];
+
+function ll3(lat, lng, r) {
+  const phi = (90 - lat) * Math.PI / 180, th = (lng + 180) * Math.PI / 180;
+  return new THREE.Vector3(-r * Math.sin(phi) * Math.cos(th), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(th));
+}
+
+let activeCategory = null;
+const btnsEl = document.getElementById('cec-btns');
+Object.entries(CATS).forEach(([name, val]) => {
+  const btn = document.createElement('button');
+  btn.className = 'cec-cat-btn';
+  btn.style.color = val.hex;
+  btn.innerHTML = `<span class="cec-dot" style="background:${val.hex}"></span>${name}`;
+  btn.dataset.cat = name;
+  btn.onclick = () => {
+    activeCategory = activeCategory === name ? null : name;
+    resetLeg();
+    if (activeCategory) { btn.style.background = val.hex; btn.style.color = '#fff'; }
+    updateDots();
+  };
+  btnsEl.appendChild(btn);
+});
+document.getElementById('cec-clear').onclick = () => {
+  activeCategory = null; resetLeg(); updateDots();
+  document.getElementById('cec-ip').style.display = 'none';
+};
+function resetLeg() {
+  document.querySelectorAll('.cec-cat-btn').forEach(b => {
+    b.style.background = 'transparent'; b.style.color = CATS[b.dataset.cat].hex;
+  });
+}
+
+const gc = document.getElementById('cec-gc');
+const cv = document.getElementById('cec-canvas');
+const W = gc.clientWidth, H = gc.clientHeight;
+const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(W, H);
+renderer.setClearColor(0x000000, 0);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+camera.position.set(0, 0, 2.8);
+scene.add(new THREE.AmbientLight(0xffffff, 1));
+
+const R = 1;
+const world = new THREE.Group();
+scene.add(world);
+
+world.add(new THREE.Mesh(
+  new THREE.SphereGeometry(R, 64, 64),
+  new THREE.MeshBasicMaterial({ color: 0xf6f5f2 })
+));
+
+const ldGeo = new THREE.SphereGeometry(0.007, 5, 5);
+const ldMat = new THREE.MeshBasicMaterial({ color: 0xc5c1b9 });
+LAND.forEach(([lat, lng]) => {
+  const m = new THREE.Mesh(ldGeo, ldMat);
+  m.position.copy(ll3(lat, lng, R + 0.004));
+  world.add(m);
+});
+
+const dotGeo = new THREE.SphereGeometry(0.019, 10, 10);
+const ringGeo = new THREE.TorusGeometry(0.032, 0.006, 6, 24);
+const dotMeshes = [];
+
+theses.forEach(t => {
+  const pos = ll3(t.lat, t.lng, R + 0.022);
+  const dot = new THREE.Mesh(dotGeo, new THREE.MeshBasicMaterial({ color: CATS[t.cats[0]].color }));
+  dot.position.copy(pos);
+  dot.userData = { t, pc: CATS[t.cats[0]].color };
+  world.add(dot); dotMeshes.push(dot);
+  if (t.award) {
+    const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: AW }));
+    ring.position.copy(pos);
+    ring.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), pos.clone().normalize());
+    world.add(ring); dot.userData.ring = ring;
+  }
+});
+
+function updateDots() {
+  dotMeshes.forEach(d => {
+    const t = d.userData.t;
+    if (!activeCategory) {
+      d.material.color.setHex(d.userData.pc); d.material.transparent = false; d.material.opacity = 1; d.scale.setScalar(1);
+      if (d.userData.ring) { d.userData.ring.material.transparent = false; d.userData.ring.material.opacity = 1; }
+    } else if (t.cats.includes(activeCategory)) {
+      d.material.color.setHex(CATS[activeCategory].color); d.material.transparent = false; d.material.opacity = 1; d.scale.setScalar(1.4);
+      if (d.userData.ring) { d.userData.ring.material.transparent = true; d.userData.ring.material.opacity = 0.5; }
+    } else {
+      d.material.color.setHex(0xd5d3ce); d.material.transparent = true; d.material.opacity = 0.2; d.scale.setScalar(0.7);
+      if (d.userData.ring) { d.userData.ring.material.transparent = true; d.userData.ring.material.opacity = 0.08; }
+    }
+  });
+}
+
+const mouse = new THREE.Vector2(-999, -999);
+const ray = new THREE.Raycaster();
+let isDrag = false, didDrag = false, pm = { x: 0, y: 0 }, autoRot = true;
+let rotY = 0, rotX = -0.3;
+
+cv.addEventListener('mousemove', e => {
+  const r = cv.getBoundingClientRect();
+  mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+  mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+  if (isDrag) {
+    const dx = e.clientX - pm.x, dy = e.clientY - pm.y;
+    if (Math.abs(dx) > 1 || Math.abs(dy) > 1) didDrag = true;
+    rotY += dx * 0.004;
+    rotX = Math.max(-1.2, Math.min(1.2, rotX - dy * 0.004));
+    pm = { x: e.clientX, y: e.clientY }; autoRot = false;
+  }
+});
+cv.addEventListener('mousedown', e => { isDrag = true; didDrag = false; pm = { x: e.clientX, y: e.clientY }; });
+cv.addEventListener('mouseup', () => {
+  isDrag = false;
+  if (!didDrag) {
+    ray.setFromCamera(mouse, camera);
+    const hits = ray.intersectObjects(dotMeshes);
+    if (hits.length > 0) {
+      const t = hits[0].object.userData.t;
+      document.getElementById('cec-ip-city').textContent = t.city;
+      document.getElementById('cec-ip-building').textContent = t.building;
+      const aw = document.getElementById('cec-ip-award'), pub = document.getElementById('cec-ip-pub');
+      if (t.award) {
+        aw.textContent = '★ ' + t.award; aw.style.display = 'block';
+        pub.style.display = t.published ? 'block' : 'none';
+        if (t.published) pub.textContent = 'Published · UC Berkeley eScholarship';
+      } else { aw.style.display = 'none'; pub.style.display = 'none'; }
+      const cats = document.getElementById('cec-ip-cats'); cats.innerHTML = '';
+      t.cats.forEach(c => {
+        const s = document.createElement('span');
+        s.className = 'cec-pill'; s.style.color = CATS[c].hex; s.textContent = c;
+        cats.appendChild(s);
+      });
+      document.getElementById('cec-ip').style.display = 'block';
+      autoRot = false; clearTimeout(window._cecRt);
+      window._cecRt = setTimeout(() => { autoRot = true; }, 5000);
+    } else { document.getElementById('cec-ip').style.display = 'none'; }
+  }
+});
+cv.addEventListener('mouseleave', () => { isDrag = false; mouse.set(-999, -999); });
+
+function animate() {
+  requestAnimationFrame(animate);
+  if (autoRot && !isDrag) rotY += 0.0013;
+  world.rotation.set(rotX, rotY, 0, 'YXZ');
+  ray.setFromCamera(mouse, camera);
+  cv.style.cursor = ray.intersectObjects(dotMeshes).length > 0 ? 'pointer' : 'grab';
+  renderer.render(scene, camera);
+}
+animate();
+
+})();
+</script>
