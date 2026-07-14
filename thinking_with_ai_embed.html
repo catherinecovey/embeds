@@ -1,0 +1,324 @@
+<!--
+  THINKING WITH AI: KNOWLEDGE, AUTHORSHIP, AND CREATIVITY
+  Page embed — Catherine E. Covey, Ph.D.
+  Paste this entire block into a Squarespace Embed Block (Code Snippet).
+  Made with Claude, Anthropic · golden dust · φ
+-->
+
+<style>
+  #tw-page {
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    color: #1a1a1a;
+    line-height: 1.7;
+    padding: 0 0 2rem;
+    box-sizing: border-box;
+  }
+
+  /* OPENING SENTENCE */
+  #tw-opening {
+    font-size: 16px;
+    line-height: 1.75;
+    color: #1a1a1a;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 0.5px solid #e8e6e0;
+  }
+  #tw-opening strong {
+    font-weight: 400;
+  }
+
+  /* THREE QUESTIONS DIAGRAM */
+  #tw-diagram {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 0.5px solid #e8e6e0;
+  }
+  .tw-diag-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 12px;
+  }
+  .tw-diag-nodes {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 10px;
+  }
+  .tw-diag-node {
+    flex: 1;
+    border: 0.5px solid #1A3C5B;
+    border-radius: 8px;
+    padding: 12px 14px;
+    background: #E6F1FB;
+  }
+  .tw-diag-node-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #0C447C;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .tw-diag-node-q {
+    font-size: 12px;
+    color: #0C447C;
+    line-height: 1.5;
+    font-style: italic;
+    font-family: Georgia, serif;
+    margin: 0;
+  }
+  .tw-diag-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    color: #1A3C5B;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .tw-diag-caption {
+    font-size: 13px;
+    font-style: italic;
+    color: #1A3C5B;
+    font-family: Georgia, serif;
+    margin: 0;
+  }
+
+  /* TWO-COLUMN SECTION */
+  #tw-two-col {
+    display: grid;
+    grid-template-columns: 61.8fr 38.2fr;
+    gap: 32px;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 0.5px solid #e8e6e0;
+    align-items: start;
+  }
+
+  /* NARRATIVE */
+  #tw-narrative p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #1a1a1a;
+    margin: 0 0 1rem;
+  }
+  #tw-narrative p:last-child { margin-bottom: 0; }
+  #tw-narrative em { font-style: italic; }
+
+  /* FIVE IDENTITIES RADIAL */
+  #tw-radial {
+    position: sticky;
+    top: 24px;
+  }
+  #tw-radial svg {
+    width: 100%;
+    height: auto;
+  }
+
+  /* OUTCOME */
+  #tw-outcome {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 0.5px solid #e8e6e0;
+  }
+  #tw-outcome p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #1a1a1a;
+    margin: 0 0 0.75rem;
+  }
+  #tw-outcome p:last-child { margin-bottom: 0; }
+
+  /* WORKING DRAFT NOTE */
+  #tw-draft {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 0.5px solid #e8e6e0;
+  }
+  #tw-draft p {
+    font-size: 12px;
+    font-style: italic;
+    color: #aaa;
+    font-family: Georgia, serif;
+    margin: 0;
+  }
+
+  /* CONNECTION DEVICES */
+  #tw-connections {
+    display: grid;
+    grid-template-columns: 61.8fr 38.2fr;
+    gap: 12px;
+  }
+  .tw-connection {
+    border: 0.5px solid #e0ded8;
+    border-radius: 8px;
+    padding: 12px 14px;
+    text-decoration: none;
+    display: block;
+    transition: border-color 0.2s;
+    background: #FBFBF9;
+  }
+  .tw-connection:hover { border-color: #1A3C5B; }
+  .tw-connection-label {
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 4px;
+  }
+  .tw-connection-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 3px;
+  }
+  .tw-connection-desc {
+    font-size: 11px;
+    color: #999;
+    line-height: 1.4;
+  }
+
+  /* MOBILE */
+  @media (max-width: 560px) {
+    #tw-two-col { grid-template-columns: 1fr; gap: 20px; }
+    #tw-radial { position: static; }
+    #tw-connections { grid-template-columns: 1fr; }
+    .tw-diag-nodes { flex-direction: column; }
+    .tw-diag-arrow { transform: rotate(90deg); padding: 6px 0; justify-content: center; }
+    #tw-opening { font-size: 14px; }
+  }
+</style>
+
+<div id="tw-page">
+
+  <!-- OPENING SENTENCE -->
+  <div id="tw-opening">
+    <p>AI programs, as they are currently designed, were built for big data solutions — not for those whose work begins and ends with what remains irreducibly human. This program addresses that gap.</p>
+  </div>
+
+  <!-- THREE QUESTIONS DIAGRAM -->
+  <div id="tw-diagram">
+    <div class="tw-diag-label">The questions AI makes newly urgent</div>
+    <div class="tw-diag-nodes">
+      <div class="tw-diag-node">
+        <div class="tw-diag-node-title">Knowledge</div>
+        <p class="tw-diag-node-q">What happens to knowledge when AI can generate it?</p>
+      </div>
+      <div class="tw-diag-arrow">→</div>
+      <div class="tw-diag-node">
+        <div class="tw-diag-node-title">Authorship</div>
+        <p class="tw-diag-node-q">What happens to authorship when AI can write, design, and create?</p>
+      </div>
+      <div class="tw-diag-arrow">→</div>
+      <div class="tw-diag-node">
+        <div class="tw-diag-node-title">Creativity</div>
+        <p class="tw-diag-node-q">What happens to creativity when AI can produce?</p>
+      </div>
+    </div>
+    <p class="tw-diag-caption">Questions to inhabit.</p>
+  </div>
+
+  <!-- TWO-COLUMN: NARRATIVE + RADIAL -->
+  <div id="tw-two-col">
+
+    <!-- NARRATIVE -->
+    <div id="tw-narrative">
+      <p><em>Thinking with AI</em> began not as a curriculum proposal but as an active inquiry — enrolling in existing programs, identifying their limits, and building a more rigorous alternative through sustained practice. The syllabus is itself a portfolio artifact, produced through the methods it teaches.</p>
+
+      <p>Eight weeks. Participants bring their own expertise — in qualitative inquiry, cultural analysis, place-based research, or any human-centered field — and engage AI as both tool and subject. No technical background assumed. The experience itself is the intellectual product.</p>
+
+      <p>The program holds five simultaneous identities — held in the diagram to the right — and what they share is the center: a simultaneous inquiry that doesn't resolve into any single one of them. Every element operates as both instrument and object of inquiry — the texts, the tools, the syllabus itself. What doesn't change is the framework: the questions, the methods, and the conviction that deep domain expertise, brought into rigorous AI collaboration, produces original intellectual work.</p>
+    </div>
+
+    <!-- FIVE IDENTITIES RADIAL -->
+    <div id="tw-radial">
+      <svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- Connector lines -->
+        <line x1="150" y1="108" x2="150" y2="48" stroke="#E5E2DA" stroke-width="0.75"/>
+        <line x1="133" y1="118" x2="68" y2="92" stroke="#E5E2DA" stroke-width="0.75"/>
+        <line x1="133" y1="138" x2="68" y2="168" stroke="#E5E2DA" stroke-width="0.75"/>
+        <line x1="167" y1="118" x2="232" y2="92" stroke="#E5E2DA" stroke-width="0.75"/>
+        <line x1="167" y1="138" x2="232" y2="168" stroke="#E5E2DA" stroke-width="0.75"/>
+
+        <!-- Center -->
+        <circle cx="150" cy="128" r="38" fill="#FBFBF9" stroke="#1A3C5B" stroke-width="0.75"/>
+        <text x="150" y="123" text-anchor="middle" font-size="9.5" font-weight="400" fill="#1A3C5B" font-family="Georgia, serif" font-style="italic">Simultaneous</text>
+        <text x="150" y="136" text-anchor="middle" font-size="9.5" font-weight="400" fill="#1A3C5B" font-family="Georgia, serif" font-style="italic">Inquiry</text>
+
+        <!-- Golden dust -->
+        <circle cx="128" cy="100" r="2" fill="#EF9F27" opacity="0.65"/>
+        <circle cx="173" cy="96" r="1.5" fill="#EF9F27" opacity="0.5"/>
+        <circle cx="180" cy="118" r="1.8" fill="#EF9F27" opacity="0.55"/>
+        <circle cx="120" cy="118" r="1.5" fill="#EF9F27" opacity="0.45"/>
+        <circle cx="125" cy="155" r="2" fill="#EF9F27" opacity="0.6"/>
+        <circle cx="175" cy="152" r="1.5" fill="#EF9F27" opacity="0.5"/>
+        <circle cx="150" cy="165" r="1.8" fill="#EF9F27" opacity="0.4"/>
+        <circle cx="162" cy="92" r="1.5" fill="#EF9F27" opacity="0.45"/>
+
+        <!-- Top: thought experiment -->
+        <rect x="99" y="10" width="102" height="36" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+        <text x="150" y="26" text-anchor="middle" font-size="9" font-weight="500" fill="#0C447C" font-family="-apple-system, sans-serif">A thought</text>
+        <text x="150" y="38" text-anchor="middle" font-size="9" font-weight="500" fill="#0C447C" font-family="-apple-system, sans-serif">experiment</text>
+
+        <!-- Upper left: position statement -->
+        <rect x="4" y="72" width="102" height="36" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+        <text x="55" y="88" text-anchor="middle" font-size="9" font-weight="500" fill="#3C3489" font-family="-apple-system, sans-serif">A position</text>
+        <text x="55" y="100" text-anchor="middle" font-size="9" font-weight="500" fill="#3C3489" font-family="-apple-system, sans-serif">statement</text>
+
+        <!-- Upper right: design problem -->
+        <rect x="194" y="72" width="102" height="36" rx="6" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/>
+        <text x="245" y="88" text-anchor="middle" font-size="9" font-weight="500" fill="#712B13" font-family="-apple-system, sans-serif">A design</text>
+        <text x="245" y="100" text-anchor="middle" font-size="9" font-weight="500" fill="#712B13" font-family="-apple-system, sans-serif">problem</text>
+
+        <!-- Lower left: course to evolve -->
+        <rect x="4" y="152" width="102" height="36" rx="6" fill="#F1EFE8" stroke="#444441" stroke-width="0.5"/>
+        <text x="55" y="168" text-anchor="middle" font-size="9" font-weight="500" fill="#2C2C2A" font-family="-apple-system, sans-serif">A course</text>
+        <text x="55" y="180" text-anchor="middle" font-size="9" font-weight="500" fill="#2C2C2A" font-family="-apple-system, sans-serif">designed to evolve</text>
+
+        <!-- Lower right: AI collaboration -->
+        <rect x="194" y="152" width="102" height="36" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+        <text x="245" y="168" text-anchor="middle" font-size="9" font-weight="500" fill="#085041" font-family="-apple-system, sans-serif">An AI</text>
+        <text x="245" y="180" text-anchor="middle" font-size="9" font-weight="500" fill="#085041" font-family="-apple-system, sans-serif">collaboration</text>
+
+        <!-- Dust on connectors -->
+        <circle cx="130" cy="74" r="1.2" fill="#EF9F27" opacity="0.35"/>
+        <circle cx="100" cy="106" r="1.2" fill="#EF9F27" opacity="0.3"/>
+        <circle cx="100" cy="152" r="1.2" fill="#EF9F27" opacity="0.3"/>
+        <circle cx="200" cy="106" r="1.2" fill="#EF9F27" opacity="0.3"/>
+        <circle cx="200" cy="152" r="1.2" fill="#EF9F27" opacity="0.3"/>
+
+      </svg>
+    </div>
+
+  </div>
+
+  <!-- OUTCOME -->
+  <div id="tw-outcome">
+    <p>Each participant leaves with a Field Application Design document: a domain-specific framework for rigorous AI engagement, developed through the program and theirs to carry forward. Across participants, these documents accumulate into something that doesn't yet exist — a cross-disciplinary map of AI's relationship to human-centered practice.</p>
+    <p>The Field Application Design is a culmination of what each week's reading, practice, reflection, and collaboration produced.</p>
+  </div>
+
+  <!-- WORKING DRAFT NOTE -->
+  <div id="tw-draft">
+    <p>This program is a working draft — evolving through the methods it teaches.</p>
+  </div>
+
+  <!-- CONNECTION DEVICES -->
+  <div id="tw-connections">
+    <a class="tw-connection" href="/sf-urban-lab">
+      <div class="tw-connection-label">connection</div>
+      <div class="tw-connection-title">→ SF Urban Lab AI Reboot</div>
+      <div class="tw-connection-desc">The AI fluency developed here applied to rebuilding a place-based methodology</div>
+    </a>
+    <a class="tw-connection" href="/current-ideas">
+      <div class="tw-connection-label">connection</div>
+      <div class="tw-connection-title">→ Current Ideas</div>
+      <div class="tw-connection-desc">The questions this program raises driving active research and writing</div>
+    </a>
+  </div>
+
+</div>
